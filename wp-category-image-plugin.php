@@ -5,8 +5,6 @@ Description: Asocia una imagen a una categoría específica.
 Version: 0.1
 Author: Silvano Emanuel Roqués
 Author URI: http://lode.uno/tejne
-Text Domain: wpcip
-Domain Path: /languages
 */
 
 function wpcip_category_image_field($taxonomies) {
