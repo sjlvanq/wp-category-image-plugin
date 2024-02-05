@@ -8,16 +8,18 @@ Author URI: http://lode.uno/tejne
 */
 
 function wpcip_category_image_field($taxonomies) {
-	// https://blog.wecodeyoursite.com/how-to-add-custom-field-to-wordpress-category/
-         if (current_filter() == 'category_edit_form_fields') {  
-            $category_image = get_term_meta( $taxonomies->term_id, 'wpcip_image', true );
-            ?>
-			<?php // https://themefoundation.com/wordpress-meta-boxes-guide/ //Aditional meta box input fields?>
+         if (current_filter() == 'category_edit_form_fields') {
+            $attachment_id = get_term_meta( $taxonomies->term_id, 'wpcip_image_attachment_id', true );
+            $image_attributes = wp_get_attachment_image_src( $attachment_id );
+			?>
 			<tr class="form-field">
 				<th valign="top" scope="row"><label for="wpcip_image" class="prfx-row-title"><?php _e( 'Category Image', 'wpcip' )?></label></th>
 				<td>
-				<img src="<?php echo $category_image; ?>" />
-				<input type="text" name="wpcip_image" id="wpcip_image" value="<?php if ( isset ( $category_image) ) echo $category_image; ?>" />
+			<?php
+			if ( $image_attributes ) : ?>
+				<img src="<?php echo $image_attributes[0]; ?>" width="<?php echo $image_attributes[1]; ?>" height="<?php echo $image_attributes[2]; ?>" style="margin-bottom:10px" /><br />
+			<?php endif; ?>
+				<input type="hidden" name="wpcip_image_attachment_id" id="wpcip_image_attachment_id" value="<?php if ( isset ( $category_image) ) echo $category_image; ?>" />
 				<input type="button" id="wpcip-image-button" class="button" value="<?php _e( 'Choose or Upload an Image', 'wpcip' )?>" />
 				</td>
 			</tr>
@@ -25,8 +27,8 @@ function wpcip_category_image_field($taxonomies) {
 		<?php } elseif (current_filter() == 'category_add_form_fields') {
 		?> 
 			<div class="form-field">
-				<label for="wpcip_image" class="wpcip-row-title"><?php _e( 'Category Image', 'wpcip' )?></label>
-				<input type="text" size="40" value="" id="wpcip_image" name="wpcip_image">
+				<label for="wpcip_image_attachment_id" class="wpcip-row-title"><?php _e( 'Category Image', 'wpcip' )?></label>
+				<input type="hidden" size="40" value="" id="wpcip_image_attachment_id" name="wpcip_image_attachment_id">
 				<input type="button" id="wpcip-image-button" class="button" value="<?php _e( 'Choose or Upload an Image', 'wpcip' )?>" />
 				<p class="description">
 				</p>
@@ -40,9 +42,9 @@ add_action('category_edit_form_fields', 'wpcip_category_image_field', 10, 2);
 add_action('category_add_form_fields', 'wpcip_category_image_field', 10, 2); 
     
 function wpcip_save_category_image_field($term_id) {
-	if ( isset( $_REQUEST['wpcip_image'] ) ) { 
-		$category_image = $_REQUEST['wpcip_image']; 
-		update_term_meta( $term_id, 'wpcip_image', $category_image );   
+	if ( isset( $_REQUEST['wpcip_image_attachment_id'] ) ) { 
+		$category_image = $_REQUEST['wpcip_image_attachment_id']; 
+		update_term_meta( $term_id, 'wpcip_image_attachment_id', $category_image );   
 	}
 }
 add_action('edited_category', 'wpcip_save_category_image_field', 10, 2);
@@ -68,12 +70,14 @@ add_action( 'admin_enqueue_scripts', 'wpcip_enqueue_script' );
 
 function wpcip_shortcode( $atts = [], $content = null) {
     if(is_category()){
-		$termid = get_queried_object()->term_id;
-		$src = get_term_meta( $termid, 'wpcip_image', true );
-		if(!empty($src)){
-			$alt = $atts["alt"];
-			$width = $atts["width"];
-			$height = $atts["height"];
+		$term_id = get_queried_object()->term_id;
+        $attachment_id = get_term_meta( $term_id, 'wpcip_image_attachment_id', true );
+        $image_attributes = wp_get_attachment_image_src( $attachment_id );
+		if($image_attributes){
+			$src = $image_attributes[0];
+			$width = $image_attributes[1];
+			$height = $image_attributes[2];
+			$alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true);
 			$content = '<img src="'.$src.'" alt="'.$alt.'" width="'.$width.'" height="'.$height.'" />';
 			return $content;
 		}

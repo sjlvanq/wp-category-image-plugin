@@ -30,10 +30,8 @@ jQuery(document).ready(function($){
 
             // Grabs the attachment selection and creates a JSON representation of the model.
             var media_attachment = wpcip_image_frame.state().get('selection').first().toJSON();
-			console.log(media_attachment);
-			console.log(media_attachment.url);
-            // Sends the attachment URL to our custom image input field.
-            $('#wpcip_image').val(media_attachment.url);
+			// Sends attachment id to hidden field and src to img preview
+			$('#wpcip_image_attachment_id').val(media_attachment.id);
         });
  
         // Opens the media library frame.
