@@ -7,6 +7,11 @@ Author: Silvano Emanuel Roqués
 Author URI: http://lode.uno/tejne
 */
 
+// don't call the file directly
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 function wpcip_category_image_field($taxonomies) {
          if (current_filter() == 'category_edit_form_fields') {
             $attachment_id = get_term_meta( $taxonomies->term_id, 'wpcip_image_attachment_id', true );
