@@ -61,14 +61,14 @@ function wpcip_enqueue_script() {
         wp_enqueue_media();
  
         // Registers and enqueues the required javascript.
-        wp_register_script( 'meta-box-image', plugin_dir_url( __FILE__ ) . 'meta-box-image.js', array( 'jquery' ) );
-        wp_localize_script( 'meta-box-image', 'meta_image',
+        wp_register_script( 'wpcip-image-dialog', plugin_dir_url( __FILE__ ) . 'wpcip-image-dialog.js', array( 'jquery' ) );
+        wp_localize_script( 'wpcip-image-dialog', 'meta_image',
             array(
                 'title' => __( 'Choose or Upload an Image', 'wpcip' ),
                 'button' => __( 'Use this image', 'wpcip' ),
             )
         );
-        wp_enqueue_script( 'meta-box-image' );
+        wp_enqueue_script( 'wpcip-image-dialog' );
     }
 }
 add_action( 'admin_enqueue_scripts', 'wpcip_enqueue_script' );
